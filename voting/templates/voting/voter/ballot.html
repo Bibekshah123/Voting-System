@@ -29,10 +29,11 @@ aria-hidden="true">&times;</button>
 
 {% block custom_js %}
 <script>
-  $(function() {
-      $('.content').iCheck({
-          checkboxClass: 'icheckbox_flat-green',
-          radioClass: 'iradio_flat-green'
+  $(function () {
+      $('input[type="radio"], input[type="checkbox"]').iCheck({
+          checkboxClass: 'icheckbox_flat-red',
+          radioClass: 'iradio_flat-red',
+          increaseArea: '20%'
       });
 
       $(document).on('click', '.reset', function(e) {
@@ -44,17 +45,15 @@ aria-hidden="true">&times;</button>
       $(document).on('click', '.platform', function(e) {
           e.preventDefault();
           $('#bio').modal('show');
-          var platform = $(this).data('bio');
-          var fullname = $(this).data('fullname');
-          $('.candidate').html(fullname);
-          $('#plat_view').html(platform);
+          $('.candidate').html($(this).data('fullname'));
+          $('#plat_view').html($(this).data('bio'));
       });
 
       $('#preview').click(function(e) {
           e.preventDefault();
           var form = $('#ballotForm').serialize();
-          console.log(form);
-          if (form.search("&") < 0 || form == '') {
+
+          if (form.search("&") < 0 || form === '') {
               toastr.error('You must vote at least one candidate', "Preview Error");
           } else {
               $.ajax({
@@ -64,12 +63,7 @@ aria-hidden="true">&times;</button>
                   dataType: 'json',
                   success: function(response) {
                       if (response.error) {
-                          var errmsg = '';
-                          var messages = response.message;
-                          for (i in messages) {
-                              errmsg += messages[i];
-                          }
-                          toastr.error(errmsg, "Preview Error")
+                          toastr.error(response.message.join(''), "Preview Error");
                       } else {
                           $('#preview_modal').modal('show');
                           $('#preview_body').html(response.list);
@@ -77,13 +71,11 @@ aria-hidden="true">&times;</button>
                   }
               });
           }
-
       });
-
   });
 </script>
-
 {% endblock custom_js %}
+
 
 {% block modal %}
 
